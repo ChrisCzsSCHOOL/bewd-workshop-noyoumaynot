@@ -1,9 +1,11 @@
 package han.aim.se.noyoumaynot.movie.controller;
 
 import han.aim.se.noyoumaynot.movie.domain.Movie;
+import han.aim.se.noyoumaynot.movie.repository.UserToken;
 import han.aim.se.noyoumaynot.movie.service.AuthenticationService;
 import han.aim.se.noyoumaynot.movie.service.MovieService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +16,12 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
+
+    static final String username = "Chris";
+    static final String wachtwoord = "test";
     private final MovieService movieService;
     private final AuthenticationService authenticationService;
+    static final String token = new UserToken(username).toString();
 
     @Autowired
     public MovieController(MovieService movieService, AuthenticationService authenticationService) {
@@ -24,25 +30,28 @@ public class MovieController {
     }
 
     @GetMapping
-    public ArrayList<Movie> getAllMovies() {
+    public ArrayList<Movie> getAllMovies() throws Exception {
+        authenticate(token);
         return movieService.getMovieList();
     }
 
     @GetMapping("/show")
-    public Movie getMovieById(@RequestParam("id") String id) {
-
-            Movie movie = movieService.getMovieById(id);
-            return movie;
+    public Movie getMovieById(@RequestParam("id") String id) throws Exception {
+        authenticate(token);
+        Movie movie = movieService.getMovieById(id);
+        return movie;
     }
 
     @PostMapping("/add")
-    public Movie addMovie(@RequestBody Movie movie) {
+    public Movie addMovie(@RequestBody Movie movie) throws Exception {
+        authenticate(token);
         movieService.insertMovie(movie);
         return movie;
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteMovie(@PathVariable("id") String id) {
+    public ResponseEntity<String> deleteMovie(@PathVariable("id") String id) throws Exception {
+        authenticate(token);
         movieService.deleteMovie(id);
         return ResponseEntity.ok().build();
     }
@@ -54,6 +63,5 @@ public class MovieController {
             throw new AuthenticationException("Invalid token");
         }
     }
-
 
 }
