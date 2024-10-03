@@ -1,6 +1,7 @@
 package han.aim.se.noyoumaynot.movie.controller;
 
 import han.aim.se.noyoumaynot.movie.domain.Movie;
+import han.aim.se.noyoumaynot.movie.domain.MovieUser;
 import han.aim.se.noyoumaynot.movie.repository.UserToken;
 import han.aim.se.noyoumaynot.movie.service.AuthenticationService;
 import han.aim.se.noyoumaynot.movie.service.MovieService;
@@ -68,10 +69,13 @@ public class MovieController {
         }
     }
 
-    @GetMapping("/login")
-    public void login(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestParam String username, @RequestParam String wachtwoord) throws AuthenticationException {
+    @PostMapping("/login")
+    public void login(@RequestBody MovieUser user) throws AuthenticationException {
+        String username = user.getUsername();
+        String wachtwoord = user.getWachtwoord();
+
         UserToken userToken = authenticationService.login(username, wachtwoord);
-        token = userToken.getToken(); // initaliseer de token zodat hij gebruikt kan worden in authenticate
+        token = userToken.getToken(); // Initialiseer de token zodat hij gebruikt kan worden in authenticate
     }
 
 }

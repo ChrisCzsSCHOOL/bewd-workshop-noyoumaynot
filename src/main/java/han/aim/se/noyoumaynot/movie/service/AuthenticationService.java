@@ -1,6 +1,8 @@
 package han.aim.se.noyoumaynot.movie.service;
 
+import han.aim.se.noyoumaynot.movie.domain.Rol;
 import han.aim.se.noyoumaynot.movie.repository.UserToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
@@ -11,6 +13,12 @@ import java.util.Objects;
 @Service
 public class AuthenticationService {
   ArrayList<UserToken> userTokens = new ArrayList<>();
+  private final Rol rol;
+
+  @Autowired
+  public AuthenticationService(Rol rol) {
+    this.rol = rol;
+  }
 
   public UserToken login(String username, String password) throws AuthenticationException {
     String correctUser = "Chris";
